@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         serv00soeasy
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.9
 // @description  自动填充表单
 // @author       DABO
 // @match        *://*.serv00.com/*
@@ -38,11 +38,12 @@
 
     // 生成随机邮箱
     function generateRandomEmail(firstName, lastName) {
-        // 生成随机数字（0-999）
-        const randomNum = Math.floor(Math.random() * 1000);
         // 生成邮箱前缀
-        const emailPrefix = `${firstName.toLowerCase()}${lastName.toLowerCase()}${randomNum}`;
-        
+        let emailPrefix;
+        do {
+            emailPrefix = `${generateRandomString()}${generateRandomString()}`;
+        } while (emailPrefix === `${firstName.toLowerCase()}${lastName.toLowerCase()}`);
+
         // 根据配置选择邮箱生成方式
         if (EMAIL_CONFIG.useFixedEmail) {
             return EMAIL_CONFIG.fixedEmail;
@@ -53,7 +54,11 @@
 
     // 生成随机用户名
     function generateRandomUsername(firstName, lastName) {
-        return `${firstName.toLowerCase()}${lastName.toLowerCase()}${Math.floor(Math.random() * 1000)}`;
+        let username;
+        do {
+            username = `${generateRandomString()}${generateRandomString()}`;
+        } while (username === `${firstName.toLowerCase()}${lastName.toLowerCase()}`);
+        return username;
     }
 
     // 自动填充表单
