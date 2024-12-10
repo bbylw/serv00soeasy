@@ -24,9 +24,37 @@
 
 ### 方式一：使用固定邮箱域名
 如果你想使用固定域名（如 xxx@gmail.com），请这样配置：
+```javascript
+const EMAIL_CONFIG = {
+    fixedDomain: 'gmail.com',    // 改为你想要的域名
+    randomDomains: [],           // 保持空数组
+    useRandomDomain: false       // 保持 false
+};
+```
+这样会生成类似 `abcde12345@gmail.com` 的邮箱地址。
 
-## 配置说明
-你可以通过修改 EMAIL_CONFIG 来自定义邮箱生成行为：
+### 方式二：使用随机前缀邮箱
+如果你想使用带随机前缀的邮箱（如 xxx@mail.xxx.com），请这样配置：
+```javascript
+const EMAIL_CONFIG = {
+    fixedDomain: 'xxx.com',
+    randomDomains: [
+        {prefix: '', domain: 'xxx.com'},      // 生成 xxx@xxx.com
+        {prefix: 'mail', domain: 'xxx.com'},  // 生成 xxx@mail.xxx.com
+        {prefix: 'em', domain: 'xxx.com'}     // 生成 xxx@em.xxx.com
+    ],
+    useRandomDomain: true        // 改为 true 启用随机前缀
+};
+```
+这样会从配置的前缀中随机选择一个，生成对应格式的邮箱地址。
+
+5. 按 Ctrl+S 保存脚本
+
+## 邮箱生成说明
+- 邮箱前缀（@符号前面的部分）总是随机生成的，由随机字母和数字组成
+- 方式一只随机生成前缀，域名部分固定
+- 方式二会随机选择一个前缀配置，可以生成多种格式的邮箱地址
+- 两种方式通过 useRandomDomain 参数来切换
 
 ## 支持的表单字段
 脚本会自动识别并填充以下字段：
