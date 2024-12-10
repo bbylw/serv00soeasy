@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         serv00soeasy
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.7
 // @description  自动填充表单
 // @author       DABO
 // @match        *://*.serv00.com/*
@@ -13,12 +13,9 @@
 
     // 设置邮箱域名配置
     const EMAIL_CONFIG = {
-        fixedDomain: 'xxx.com',  // 修改为你的域名
-        randomDomains: [         // 如果需要随机前缀域名，可以在这里添加
-            {prefix: '', domain: 'xxx.com'},     // 生成 xxx@xxx.com
-            {prefix: 'mail', domain: 'xxx.com'}, // 生成 xxx@mail.xxx.com
-        ],
-        useRandomDomain: false   // 设置为 true 启用随机前缀域名
+        useFixedEmail: false, // 设置为 true 使用固定邮箱，false 使用固定后缀前缀随机邮箱
+        fixedEmail: 'xxx@xxx.com',  // 修改为你的固定邮箱，例如 'xxx@xxx.com'
+        suffixDomain: 'xxx.com',    // 修改为你的域名后缀，例如 'xxx.com'
     };
 
     // 生成随机字符串（5个字母）
@@ -46,20 +43,12 @@
         // 生成邮箱前缀
         const emailPrefix = `${firstName.toLowerCase()}${lastName.toLowerCase()}${randomNum}`;
         
-        // 根据配置选择域名
-        let emailDomain;
-        if (EMAIL_CONFIG.useRandomDomain) {
-            const randomDomainConfig = EMAIL_CONFIG.randomDomains[
-                Math.floor(Math.random() * EMAIL_CONFIG.randomDomains.length)
-            ];
-            emailDomain = randomDomainConfig.prefix ? 
-                `${randomDomainConfig.prefix}.${randomDomainConfig.domain}` : 
-                randomDomainConfig.domain;
+        // 根据配置选择邮箱生成方式
+        if (EMAIL_CONFIG.useFixedEmail) {
+            return EMAIL_CONFIG.fixedEmail;
         } else {
-            emailDomain = EMAIL_CONFIG.fixedDomain;
+            return `${emailPrefix}@${EMAIL_CONFIG.suffixDomain}`;
         }
-
-        return `${emailPrefix}@${emailDomain}`;
     }
 
     // 生成随机用户名
