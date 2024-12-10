@@ -43,6 +43,7 @@
 
 在脚本代码中找到EMAIL_CONFIG对象。
 将useFixedEmail设置为false
+
 const EMAIL_CONFIG = {
     useFixedEmail: false, // 设置为 false 使用随机前缀邮箱
     fixedEmail: 'xxx@xxx.com', // 这行可以保留或删除，因为不会被使用
