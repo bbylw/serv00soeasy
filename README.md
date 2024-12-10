@@ -26,31 +26,24 @@
 
 如果您希望每次使用固定的邮箱地址（例如`xxx@xxx.com`），请按照以下步骤配置：
 
-1. 在脚本代码中找到`EMAIL_CONFIG`对象。
-2. 将`useFixedEmail`设置为`true`：
-   ```javascript
-   const EMAIL_CONFIG = {
-       useFixedEmail: true, // 设置为 true 使用固定邮箱
-       fixedEmail: 'xxx@xxx.com', // 修改为你希望使用的固定邮箱地址
-       suffixDomain: 'xxx.com'    // 这行可以保留或删除，因为不会被使用
-   };
-```
-这样会生成类似 `abcde12345@gmail.com` 的邮箱地址。
-
-### 方式二：使用随机前缀邮箱
-   
+```javascript
+const EMAIL_CONFIG = {
+    useFixedEmail: true, // 设置为 true 使用固定邮箱
+    fixedEmail: 'xxx@xxx.com', // 修改为你希望使用的固定邮箱地址
+    suffixDomain: 'xxx.com'    // 这行可以保留或删除，因为不会被使用
+};
+方式二：使用随机前缀域名邮箱
 如果您希望每次生成一个随机前缀但固定后缀的邮箱地址（例如randomPrefix@xxx.com），请按照以下步骤配置：
 
-在脚本代码中找到EMAIL_CONFIG对象。
-将useFixedEmail设置为false
-
+JAVASCRIPT
 const EMAIL_CONFIG = {
     useFixedEmail: false, // 设置为 false 使用随机前缀邮箱
     fixedEmail: 'xxx@xxx.com', // 这行可以保留或删除，因为不会被使用
     suffixDomain: 'xxx.com'    // 修改为你希望使用的域名后缀
 };
-
-这样会从配置的前缀中随机选择一个，生成对应格式的邮箱地址。
+注意事项
+修改后保存：确保修改代码后保存并刷新页面以应用更改。
+自动填充：此脚本会自动填充名字、姓氏、用户名、邮箱和答案字段，并勾选服务条款。
 
 5. 按 Ctrl+S 保存脚本
 
