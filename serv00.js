@@ -1,18 +1,25 @@
 // ==UserScript==
-// @name         serv00自动填充表单
-// @namespace    https://webproxy.lumiproxy.com/
-// @version      0.1
-// @description  自动填充注册表单字段
-// @author       Dabo
-// @match        *://*/*
-// @grant        none
+// @name         serv00soeasy
+// @namespace    http://tampermonkey.net/
+// @version      0.2
+// @description  自动填充表单
+// @author       DABO
+// @match        *://*.serv00.com/*
+// @grant        GM_xmlhttpRequest
 // ==/UserScript==
 
 (function() {
     'use strict';
 
-    // 设置默认邮箱地址
-    const EMAIL_ADDRESS = 'xxx@gmail.com';
+    // 设置邮箱域名配置
+    const EMAIL_CONFIG = {
+        fixedDomain: 'xxx.com',  // 修改为你的域名
+        randomDomains: [         // 如果需要随机前缀域名，可以在这里添加
+            {prefix: '', domain: 'xxx.com'},     // 生成 xxx@xxx.com
+            {prefix: 'mail', domain: 'xxx.com'}, // 生成 xxx@mail.xxx.com
+        ],
+        useRandomDomain: false   // 设置为 true 启用随机前缀域名
+    };
 
     // 生成随机字符串（5个字母）
     function generateRandomString() {
@@ -34,9 +41,25 @@
 
     // 生成随机邮箱
     function generateRandomEmail(firstName, lastName) {
-        const domains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com'];
-        const domain = domains[Math.floor(Math.random() * domains.length)];
-        return `${firstName.toLowerCase()}.${lastName.toLowerCase()}${Math.floor(Math.random() * 1000)}@${domain}`;
+        // 生成随机数字（0-999）
+        const randomNum = Math.floor(Math.random() * 1000);
+        // 生成邮箱前缀
+        const emailPrefix = `${firstName.toLowerCase()}${lastName.toLowerCase()}${randomNum}`;
+        
+        // 根据配置选择域名
+        let emailDomain;
+        if (EMAIL_CONFIG.useRandomDomain) {
+            const randomDomainConfig = EMAIL_CONFIG.randomDomains[
+                Math.floor(Math.random() * EMAIL_CONFIG.randomDomains.length)
+            ];
+            emailDomain = randomDomainConfig.prefix ? 
+                `${randomDomainConfig.prefix}.${randomDomainConfig.domain}` : 
+                randomDomainConfig.domain;
+        } else {
+            emailDomain = EMAIL_CONFIG.fixedDomain;
+        }
+
+        return `${emailPrefix}@${emailDomain}`;
     }
 
     // 生成随机用户名
@@ -45,7 +68,7 @@
     }
 
     // 自动填充表单
-    function autoFillForm() {
+    async function autoFillForm() {
         const name = generateRandomName();
         const email = generateRandomEmail(name.firstName, name.lastName);
         const username = generateRandomUsername(name.firstName, name.lastName);
@@ -64,7 +87,7 @@
 
         // 填充邮箱字段
         const emailInputs = document.querySelectorAll('input[type="email"], input[name*="email" i], input[id*="email" i]');
-        emailInputs.forEach(input => input.value = EMAIL_ADDRESS);
+        emailInputs.forEach(input => input.value = email);
 
         // 填充答案字段
         const answerInputs = document.querySelectorAll('input[name*="question" i], input[id*="question" i]');
@@ -75,8 +98,23 @@
         tosCheckboxes.forEach(checkbox => checkbox.checked = true);
     }
 
-    // 删除按钮相关代码，直接在页面加载完成后执行自动填充
-    document.addEventListener('DOMContentLoaded', autoFillForm);
-    // 为了处理某些动态加载的表单，也可以在 load 事件时执行一次
-    window.addEventListener('load', autoFillForm);
+    // 添加重试机制
+    let retryCount = 0;
+    const MAX_RETRIES = 3;
+
+    async function tryFillForm() {
+        try {
+            await autoFillForm();
+        } catch (error) {
+            console.error('表单填充失败:', error);
+            if (retryCount < MAX_RETRIES) {
+                retryCount++;
+                setTimeout(tryFillForm, 1000); // 1秒后重试
+            }
+        }
+    }
+
+    // 事件监听器
+    document.addEventListener('DOMContentLoaded', tryFillForm);
+    window.addEventListener('load', tryFillForm);
 })();
